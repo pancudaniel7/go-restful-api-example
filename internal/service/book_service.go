@@ -1,10 +1,10 @@
 package services
 
 import (
+	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/entity"
 	"gorm.io/gorm"
 	"log"
-	"time"
 )
 
 type BookService struct {
@@ -16,8 +16,8 @@ func NewBookService(db *gorm.DB) *BookService {
 }
 
 // AddBook adds a new book to a store
-func (s *BookService) AddBook(title, author string, publishedDate time.Time, storeID uint) (*internal.Book, error) {
-	book := internal.Book{Title: title, Author: author, PublishedDate: publishedDate, StoreID: storeID}
+func (s *BookService) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
+	book := internal.Book{Title: bookDTO.Title, Author: bookDTO.Author, PublishedDate: bookDTO.PublishedDate, StoreID: bookDTO.StoreID}
 	result := s.db.Create(&book)
 	if result.Error != nil {
 		log.Println("Error creating book:", result.Error)
@@ -26,36 +26,34 @@ func (s *BookService) AddBook(title, author string, publishedDate time.Time, sto
 	return &book, nil
 }
 
-// AddPage adds a new page to a book
-func (s *BookService) AddPage(bookID uint, pageNumber int, content string) (*internal.Page, error) {
-	page := internal.Page{BookID: bookID, PageNumber: pageNumber, Content: content}
-	result := s.db.Create(&page)
-	if result.Error != nil {
-		log.Println("Error creating page:", result.Error)
-		return nil, result.Error
-	}
-	return &page, nil
-}
-
-// FindBookByTitle finds a book by its title
-func (s *BookService) FindBookByTitle(title string) (*internal.Book, error) {
-	var book internal.Book
-	result := s.db.First(&book, "title = ?", title)
+// UpdateBook updates a book in a store
+func (s *BookService) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
+	book := &internal.Book{}
+	result := s.db.First(book, bookDTO.ID)
 	if result.Error != nil {
 		log.Println("Error finding book:", result.Error)
 		return nil, result.Error
 	}
-	return &book, nil
+
+	book.Title = bookDTO.Title
+	book.Author = bookDTO.Author
+	book.PublishedDate = bookDTO.PublishedDate
+	book.StoreID = bookDTO.StoreID
+
+	result = s.db.Save(&book)
+	if result.Error != nil {
+		log.Println("Error updating book:", result.Error)
+		return nil, result.Error
+	}
+	return book, nil
 }
 
-// UpdateBookTitle updates the title of a book
-func (s *BookService) UpdateBookTitle(bookID uint, newTitle string) error {
-	result := s.db.Model(&internal.Book{}).Where("id = ?", bookID).Update("title", newTitle)
-	return result.Error
-}
-
-// DeleteBook deletes a book
-func (s *BookService) DeleteBook(bookID uint) error {
-	result := s.db.Delete(&internal.Book{}, bookID)
-	return result.Error
+// DeleteBook deletes a book from a store
+func (s *BookService) DeleteBook(id uint) error {
+	result := s.db.Delete(&internal.Book{}, id)
+	if result.Error != nil {
+		log.Println("Error deleting book:", result.Error)
+		return result.Error
+	}
+	return nil
 }

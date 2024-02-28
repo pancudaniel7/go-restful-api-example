@@ -1,7 +1,7 @@
 package test
 
 import (
-	internal "github.com/pancudaniel7/go-restful-api-example/internal/model"
+	internal "github.com/pancudaniel7/go-restful-api-example/internal/entity"
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

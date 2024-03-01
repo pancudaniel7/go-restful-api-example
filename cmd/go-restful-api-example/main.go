@@ -22,8 +22,8 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	storeController, bookController := initServices(db)
-	router := registerRoutes(storeController, bookController)
+	storeController, bookController, healthController := initServices(db)
+	router := registerRoutes(storeController, bookController, healthController)
 
 	port := viper.GetInt("server.port")
 	router.Run(fmt.Sprintf(":%d", port))
@@ -72,21 +72,24 @@ func propsConfig() error {
 	return err
 }
 
-func registerRoutes(storeController *controller.StoreController, bookController *controller.BookController) *gin.Engine {
+func registerRoutes(storeController *controller.StoreController, bookController *controller.BookController, healthController *controller.HealthController) *gin.Engine {
 	router := gin.Default()
 	storeController.RegisterRoutes(router)
 	bookController.RegisterRoutes(router)
+	healthController.RegisterRoutes(router)
 	return router
 }
 
-func initServices(db *gorm.DB) (*controller.StoreController, *controller.BookController) {
+func initServices(db *gorm.DB) (*controller.StoreController, *controller.BookController, *controller.HealthController) {
 
 	storeService := service.NewStoreService(db)
 	storeController := controller.NewStoreController(storeService)
 
 	bookService := service.NewBookService(db)
 	bookController := controller.NewBookController(bookService)
-	return storeController, bookController
+
+	healthController := controller.NewHealthController()
+	return storeController, bookController, healthController
 }
 
 func configDatabase() string {

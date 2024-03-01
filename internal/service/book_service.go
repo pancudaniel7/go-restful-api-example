@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/entity"
+	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
 	"gorm.io/gorm"
 	"log"
 )
@@ -17,7 +18,12 @@ func NewBookService(db *gorm.DB) *BookService {
 
 // AddBook adds a new book to a store
 func (s *BookService) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
-	book := internal.Book{Title: bookDTO.Title, Author: bookDTO.Author, PublishedDate: bookDTO.PublishedDate, StoreID: bookDTO.StoreID}
+	book := internal.Book{
+		Title:         bookDTO.Title,
+		Author:        bookDTO.Author,
+		PublishedDate: utils.ConvertTimeToNullTime(bookDTO.PublishedDate),
+		StoreID:       bookDTO.StoreID,
+	}
 	result := s.db.Create(&book)
 	if result.Error != nil {
 		log.Println("Error creating book:", result.Error)
@@ -37,7 +43,7 @@ func (s *BookService) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 
 	book.Title = bookDTO.Title
 	book.Author = bookDTO.Author
-	book.PublishedDate = bookDTO.PublishedDate
+	book.PublishedDate = utils.ConvertTimeToNullTime(bookDTO.PublishedDate)
 	book.StoreID = bookDTO.StoreID
 
 	result = s.db.Save(&book)
@@ -56,4 +62,26 @@ func (s *BookService) DeleteBook(id uint) error {
 		return result.Error
 	}
 	return nil
+}
+
+// GetBooks retrieves all books from the database
+func (s *BookService) GetBooks() ([]internal.Book, error) {
+	var books []internal.Book
+	result := s.db.Find(&books)
+	if result.Error != nil {
+		log.Println("Error retrieving books:", result.Error)
+		return nil, result.Error
+	}
+	return books, nil
+}
+
+// GetBook retrieves a book by its ID from the database
+func (s *BookService) GetBook(id uint) (*internal.Book, error) {
+	book := &internal.Book{}
+	result := s.db.First(book, id)
+	if result.Error != nil {
+		log.Println("Error finding book:", result.Error)
+		return nil, result.Error
+	}
+	return book, nil
 }

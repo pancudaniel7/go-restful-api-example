@@ -1,17 +1,16 @@
 package internal
 
 import (
+	"database/sql"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Book struct {
 	gorm.Model
 	Title         string
 	Author        string
-	PublishedDate time.Time
+	PublishedDate sql.NullTime
 	StoreID       uint
-	Pages         []Page
 }
 
 // TableName overrides the table name used by User to `store`

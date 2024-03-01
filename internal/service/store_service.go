@@ -55,3 +55,25 @@ func (s *StoreService) DeleteStore(id uint) error {
 	}
 	return nil
 }
+
+// GetStores retrieves all stores from the database
+func (s *StoreService) GetStores() ([]internal.Store, error) {
+	var stores []internal.Store
+	result := s.db.Find(&stores)
+	if result.Error != nil {
+		log.Println("Error retrieving stores:", result.Error)
+		return nil, result.Error
+	}
+	return stores, nil
+}
+
+// GetStore retrieves a store by its ID from the database
+func (s *StoreService) GetStore(id uint) (*internal.Store, error) {
+	store := &internal.Store{}
+	result := s.db.First(store, id)
+	if result.Error != nil {
+		log.Println("Error finding store:", result.Error)
+		return nil, result.Error
+	}
+	return store, nil
+}

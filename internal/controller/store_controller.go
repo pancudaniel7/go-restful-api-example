@@ -64,8 +64,36 @@ func (c *StoreController) UpdateStore(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, store)
 }
 
+func (c *StoreController) GetStores(ctx *gin.Context) {
+	stores, err := c.service.GetStores()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, stores)
+}
+
+func (c *StoreController) GetStore(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid store ID"})
+		return
+	}
+
+	store, err := c.service.GetStore(uint(id))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, store)
+}
+
 func (c *StoreController) RegisterRoutes(router *gin.Engine) {
-	router.POST("/store", c.AddStore)
-	router.PUT("/store", c.UpdateStore)
-	router.DELETE("/store/:id", c.DeleteStore)
+	router.POST("/stores", c.AddStore)
+	router.PUT("/stores", c.UpdateStore)
+	router.DELETE("/stores/:id", c.DeleteStore)
+	router.GET("/stores", c.GetStores)
+	router.GET("/stores/:id", c.GetStore)
 }

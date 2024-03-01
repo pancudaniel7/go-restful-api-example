@@ -74,6 +74,14 @@ With the collection and environment set up, you can now use the requests defined
 2. Click on an API request to view its details.
 3. Hit the `Send` button to execute the request and see the response.
 
+### RESTful API and Hypermedia
+The highest maturity level in REST, known as **Level3**: Hypermedia Controls" (based on the Richardson Maturity Model), 
+emphasizes the use of Hypermedia as the Engine of Application State (HATEOAS).At this stage, server responses include hypermedia 
+links that guide clients towards other relevant actions and resources. This design principle abstracts the API into a self-descriptive,
+navigable format.It enables clients to dynamically discover and interact with the API's capabilities without prior 
+knowledge of its structure, making applications more adaptive, scalable, and easier to evolve. This level epitomizes the full 
+realization of REST by enhancing client-server interaction with comprehensive, context-aware hypermedia.
+
 ---
 
 This project was created to demonstrate the principles of building a RESTful API with Go, showcasing effective practices in structuring and testing API endpoints.

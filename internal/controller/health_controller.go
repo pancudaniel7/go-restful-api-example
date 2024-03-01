@@ -15,6 +15,9 @@ func NewHealthController() *HealthController {
 func (c *HealthController) Health(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": "UP",
+		"_links": gin.H{
+			"self": "/health",
+		},
 	})
 }
 

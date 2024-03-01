@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
@@ -88,7 +89,19 @@ func (c *BookController) GetBook(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, book)
+	// Add hypermedia URLs
+	bookResponse := gin.H{
+		"book": book,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/books/%d", id),
+			"delete": fmt.Sprintf("/books/%d", id),
+			"update": fmt.Sprintf("/books/%d", id),
+			"create": "/books",
+			"get":    fmt.Sprintf("/books/%d", id),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, bookResponse)
 }
 
 func (c *BookController) RegisterRoutes(router *gin.Engine) {

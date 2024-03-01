@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
@@ -87,7 +88,18 @@ func (c *StoreController) GetStore(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, store)
+	storeResponse := gin.H{
+		"store": store,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/stores/%d", id),
+			"delete": fmt.Sprintf("/stores/%d", id),
+			"update": fmt.Sprintf("/stores/%d", id),
+			"create": "/stores",
+			"get":    fmt.Sprintf("/stores/%d", id),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, storeResponse)
 }
 
 func (c *StoreController) RegisterRoutes(router *gin.Engine) {

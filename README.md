@@ -47,7 +47,7 @@ This will download and install the required dependencies.
 To run the **database** you can run the following command in the project root directory:
 
 ```bash
-docker-compose up
+docker-compose -f deployments/docker-compose.yml up
 ```
 
 ### Running the Application

@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
+	"github.com/pancudaniel7/go-restful-api-example/api/dto"
+
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"net/http"
 	"strconv"

@@ -2,11 +2,11 @@ package controller
 
 import (
 	"fmt"
+	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 )
 
@@ -90,7 +90,6 @@ func (c *BookController) GetBook(ctx *gin.Context) {
 		return
 	}
 
-	// Add hypermedia URLs
 	bookResponse := gin.H{
 		"book": book,
 		"_links": gin.H{

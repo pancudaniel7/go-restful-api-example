@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/pancudaniel7/go-restful-api-example/internal/controller"
+	"github.com/pancudaniel7/go-restful-api-example/api/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -26,7 +26,10 @@ func main() {
 	router := registerRoutes(storeController, bookController, healthController)
 
 	port := viper.GetInt("server.port")
-	router.Run(fmt.Sprintf(":%d", port))
+	err = router.Run(fmt.Sprintf(":%d", port))
+	if err != nil {
+		panic("failed to start server")
+	}
 }
 
 func configLogger(err error) {
@@ -63,7 +66,7 @@ func configLogger(err error) {
 func propsConfig() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath("internal/config")
+	viper.AddConfigPath("configs/")
 
 	err := viper.ReadInConfig()
 	if err != nil {

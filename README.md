@@ -94,8 +94,8 @@ The highest maturity level in REST, known as **Level3**: **Hypermedia** Controls
 emphasizes the use of Hypermedia as the Engine of Application State (HATEOAS). 
 At this stage, server responses include
 hypermedia links that guide clients towards other relevant actions and resources. This design principle abstracts the API into a
-self-descriptive,
-navigable format.It enables clients to dynamically discover and interact with the API's capabilities without prior
+self-descriptive, navigable format. 
+It enables clients to dynamically discover and interact with the API's capabilities without prior
 knowledge of its structure, making applications more adaptive, scalable, and easier to evolve. This level epitomizes the
 full realization of REST by enhancing client-server interaction with comprehensive, context-aware hypermedia.
 

@@ -1,4 +1,4 @@
-# go-restful-api-example
+# Go Restful API Example
 
 The project is an **API** built with Go, designed to provide an example of implementing a **RESTful API**
 structure. This document provides instructions on how to set up the project, manage dependencies, run the application,

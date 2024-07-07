@@ -59,7 +59,7 @@ go run main.go
 ```
 
 This will start the application on <default port, e.g., :8080>. You can access the API
-at `http://localhost:<default port, e.g., :8080>`.
+at `http://localhost:8080`.
 
 ## Using the Postman Collection
 

@@ -58,7 +58,7 @@ To start the server, run the following command in the project root directory:
 go run main.go
 ```
 
-This will start the application on <default port, e.g., :8080>. You can access the API
+This will start the application on <default port. :8080>. You can access the API
 at `http://localhost:8080`.
 
 ## Using the Postman Collection
@@ -91,14 +91,13 @@ API:
 ### RESTful API and Hypermedia
 
 The highest maturity level in REST, known as **Level3**: **Hypermedia** Controls" (based on the Richardson Maturity Model),
-emphasizes the use of Hypermedia as the Engine of Application State (HATEOAS).At this stage, server responses include
-hypermedia
-links that guide clients towards other relevant actions and resources. This design principle abstracts the API into a
+emphasizes the use of Hypermedia as the Engine of Application State (HATEOAS). 
+At this stage, server responses include
+hypermedia links that guide clients towards other relevant actions and resources. This design principle abstracts the API into a
 self-descriptive,
 navigable format.It enables clients to dynamically discover and interact with the API's capabilities without prior
 knowledge of its structure, making applications more adaptive, scalable, and easier to evolve. This level epitomizes the
-full
-realization of REST by enhancing client-server interaction with comprehensive, context-aware hypermedia.
+full realization of REST by enhancing client-server interaction with comprehensive, context-aware hypermedia.
 
 ---
 

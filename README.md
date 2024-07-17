@@ -11,12 +11,12 @@ purposes.
 
 ### Prerequisites
 
-Ensure you have Go installed on your machine. This project requires **Go 1.15** or higher, **Docker** and **Docker Compose**.
-You can check your Go version by running:
+Before going further make sure that you have this tools installed on your machine.
 
-```bash
-go version
-```
+ - Go
+ - Docker
+ - Docker-compose
+ - Dlv
 
 ### Installing
 

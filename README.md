@@ -12,7 +12,7 @@ purposes.
 ### Prerequisites
 
 Ensure you have Go installed on your machine. This project requires **Go 1.15** or higher, **Docker** and **Docker Compose**.
-You can check your Go version by  running:
+You can check your Go version by running:
 
 ```bash
 go version
@@ -23,16 +23,14 @@ go version
 First, clone the repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/pancudaniel7/go-restful-api-example.git
 ```
 
 Navigate to the project directory:
 
 ```bash
-cd <project-directory>
+cd go-restful-api-example/
 ```
-
-### Managing Dependencies
 
 This project uses go mod for managing dependencies. To install all the necessary dependencies, run the following command
 in the project **root** directory:
@@ -55,11 +53,18 @@ docker-compose -f deployments/docker-compose.yml up
 To start the server, run the following command in the project root directory:
 
 ```bash
-go run main.go
+go run cmd/go-restful-api-example/main.go
 ```
 
 This will start the application on <default port. :8080>. You can access the API
 at `http://localhost:8080`.
+
+### Running the Application using remote debug port
+
+In order to remote debug the application you can run this and attach a debug interface to 2345 port.
+```bash
+dlv debug cmd/go-restful-api-example/main.go --headless --listen=:2345 --api-version=2 --log
+```
 
 ## Using the Postman Collection
 

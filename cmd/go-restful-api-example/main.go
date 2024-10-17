@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pancudaniel7/go-restful-api-example/api/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
@@ -88,7 +89,7 @@ func initServices(db *gorm.DB) (*controller.StoreController, *controller.BookCon
 	storeService := service.NewStoreService(db)
 	storeController := controller.NewStoreController(storeService)
 
-	bookService := service.NewBookService(db)
+	var bookService service.BookService = service.NewBookServiceImpl(db)
 	bookController := controller.NewBookController(bookService)
 
 	healthController := controller.NewHealthController()

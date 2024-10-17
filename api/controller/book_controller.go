@@ -2,19 +2,20 @@ package controller
 
 import (
 	"fmt"
-	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 	"net/http"
 	"strconv"
+
+	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 
 	"github.com/gin-gonic/gin"
 	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 )
 
 type BookController struct {
-	service *services.BookService
+	service services.BookService
 }
 
-func NewBookController(service *services.BookService) *BookController {
+func NewBookController(service services.BookService) *BookController {
 	return &BookController{service: service}
 }
 

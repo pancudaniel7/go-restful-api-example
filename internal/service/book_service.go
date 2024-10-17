@@ -1,23 +1,24 @@
 package services
 
 import (
+	"log"
+
 	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model"
 	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
 	"gorm.io/gorm"
-	"log"
 )
 
-type BookService struct {
+type BookServiceImpl struct {
 	db *gorm.DB
 }
 
-func NewBookService(db *gorm.DB) *BookService {
-	return &BookService{db: db}
+func NewBookServiceImpl(db *gorm.DB) *BookServiceImpl {
+	return &BookServiceImpl{db: db}
 }
 
 // AddBook adds a new book to a store
-func (s *BookService) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
+func (s *BookServiceImpl) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	book := internal.Book{
 		Title:         bookDTO.Title,
 		Author:        bookDTO.Author,
@@ -33,7 +34,7 @@ func (s *BookService) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 }
 
 // UpdateBook updates a book in a store
-func (s *BookService) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
+func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	book := &internal.Book{}
 	result := s.db.First(book, bookDTO.ID)
 	if result.Error != nil {
@@ -55,7 +56,7 @@ func (s *BookService) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 }
 
 // DeleteBook deletes a book from a store
-func (s *BookService) DeleteBook(id uint) error {
+func (s *BookServiceImpl) DeleteBook(id uint) error {
 	result := s.db.Delete(&internal.Book{}, id)
 	if result.Error != nil {
 		log.Println("Error deleting book:", result.Error)
@@ -65,7 +66,7 @@ func (s *BookService) DeleteBook(id uint) error {
 }
 
 // GetBooks retrieves all books from the database
-func (s *BookService) GetBooks() ([]internal.Book, error) {
+func (s *BookServiceImpl) GetBooks() ([]internal.Book, error) {
 	var books []internal.Book
 	result := s.db.Find(&books)
 	if result.Error != nil {
@@ -76,7 +77,7 @@ func (s *BookService) GetBooks() ([]internal.Book, error) {
 }
 
 // GetBook retrieves a book by its ID from the database
-func (s *BookService) GetBook(id uint) (*internal.Book, error) {
+func (s *BookServiceImpl) GetBook(id uint) (*internal.Book, error) {
 	book := &internal.Book{}
 	result := s.db.First(book, id)
 	if result.Error != nil {

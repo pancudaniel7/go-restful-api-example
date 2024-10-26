@@ -1,5 +1,4 @@
-
-USE `restful`;
+USE restful;
 
 INSERT INTO pages (book_id, page_number, content) VALUES
 ((SELECT id FROM books WHERE title = 'The Great Gatsby'), 1, 'In my younger and more vulnerable years...'),

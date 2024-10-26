@@ -1,4 +1,4 @@
-USE `restful`;
+USE restful;
 
 ALTER TABLE store
     ADD COLUMN deleted_at DATETIME DEFAULT NULL;

@@ -1,4 +1,4 @@
-USE `restful`;
+USE restful;
 
 CREATE TABLE IF NOT EXISTS store (
     id BINARY(16) PRIMARY KEY,

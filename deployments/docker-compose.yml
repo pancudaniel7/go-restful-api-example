@@ -4,15 +4,14 @@ services:
   database:
     image: mysql:8.3.0
     environment:
-      MYSQL_DATABASE: 'restful'
-      MYSQL_ROOT_PASSWORD: 'rootadmin'
-      MYSQL_USER: 'appuser'
-      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: rootadmin
+      MYSQL_DATABASE: restful
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d
-      - ~/restful-data:/var/lib/mysql
 
 volumes:
   restful-data:

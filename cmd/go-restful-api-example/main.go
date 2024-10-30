@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	controller2 "github.com/pancudaniel7/go-restful-api-example/internal/controller"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pancudaniel7/go-restful-api-example/api/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -76,7 +76,7 @@ func propsConfig() error {
 	return err
 }
 
-func registerRoutes(storeController *controller.StoreController, bookController *controller.BookController, healthController *controller.HealthController) *gin.Engine {
+func registerRoutes(storeController *controller2.StoreController, bookController *controller2.BookController, healthController *controller2.HealthController) *gin.Engine {
 	router := gin.Default()
 	storeController.RegisterRoutes(router)
 	bookController.RegisterRoutes(router)
@@ -84,15 +84,15 @@ func registerRoutes(storeController *controller.StoreController, bookController 
 	return router
 }
 
-func initServices(db *gorm.DB) (*controller.StoreController, *controller.BookController, *controller.HealthController) {
+func initServices(db *gorm.DB) (*controller2.StoreController, *controller2.BookController, *controller2.HealthController) {
 
 	storeService := service.NewStoreService(db)
-	storeController := controller.NewStoreController(storeService)
+	storeController := controller2.NewStoreController(storeService)
 
-	var bookService service.BookService = service.NewBookServiceImpl(db)
-	bookController := controller.NewBookController(bookService)
+	var bookService service.BookService = service.GetBookServiceImpl(db)
+	bookController := controller2.NewBookController(bookService)
 
-	healthController := controller.NewHealthController()
+	healthController := controller2.NewHealthController()
 	return storeController, bookController, healthController
 }
 

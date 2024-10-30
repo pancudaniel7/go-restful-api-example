@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/pancudaniel7/go-restful-api-example/api/dto"
+	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model"
 )
 

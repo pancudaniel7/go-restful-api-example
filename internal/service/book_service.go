@@ -1,9 +1,10 @@
 package services
 
 import (
+	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	"log"
+	"sync"
 
-	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model"
 	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
 	"gorm.io/gorm"
@@ -13,8 +14,16 @@ type BookServiceImpl struct {
 	db *gorm.DB
 }
 
-func NewBookServiceImpl(db *gorm.DB) *BookServiceImpl {
-	return &BookServiceImpl{db: db}
+var (
+	bookServiceInstance *BookServiceImpl
+	once                sync.Once
+)
+
+func GetBookServiceImpl(db *gorm.DB) *BookServiceImpl {
+	once.Do(func() {
+		bookServiceInstance = &BookServiceImpl{db: db}
+	})
+	return bookServiceInstance
 }
 
 // AddBook adds a new book to a store

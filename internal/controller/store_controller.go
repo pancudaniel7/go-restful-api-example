@@ -2,10 +2,9 @@ package controller
 
 import (
 	"fmt"
+	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pancudaniel7/go-restful-api-example/api/dto"
-
 	"net/http"
 	"strconv"
 

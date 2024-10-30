@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/pancudaniel7/go-restful-api-example/internal/dto"
 	"log"
 
-	"github.com/pancudaniel7/go-restful-api-example/api/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model"
 	"gorm.io/gorm"
 )

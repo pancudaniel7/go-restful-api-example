@@ -53,7 +53,7 @@ docker-compose -f deployments/docker-compose.yml up
 To start the server, run the following command in the project root directory:
 
 ```bash
-go run cmd/go-restful-api-example/main.go
+go run cmd/main.go
 ```
 
 This will start the application on <default port. :8080>. You can access the API

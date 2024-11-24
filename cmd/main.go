@@ -65,7 +65,7 @@ func configLogger(err error) {
 }
 
 func propsConfig() error {
-	viper.SetConfigName("config")
+	viper.SetConfigName("properties")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath("configs/")
 

@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	controller2 "github.com/pancudaniel7/go-restful-api-example/internal/controller"
-
 	"github.com/gin-gonic/gin"
+	controller2 "github.com/pancudaniel7/go-restful-api-example/internal/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -14,7 +13,7 @@ import (
 )
 
 func main() {
-	err := propsConfig()
+	err := initProperties()
 	configLogger(err)
 
 	dsn := configDatabase()
@@ -23,7 +22,7 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	storeController, bookController, healthController := initServices(db)
+	storeController, bookController, healthController := initContext(db)
 	router := registerRoutes(storeController, bookController, healthController)
 
 	port := viper.GetInt("server.port")
@@ -31,6 +30,37 @@ func main() {
 	if err != nil {
 		panic("failed to start server")
 	}
+}
+
+func registerRoutes(storeController *controller2.StoreController, bookController *controller2.BookController, healthController *controller2.HealthController) *gin.Engine {
+	router := gin.Default()
+	storeController.RegisterRoutes(router)
+	bookController.RegisterRoutes(router)
+	healthController.RegisterRoutes(router)
+	return router
+}
+
+func initContext(db *gorm.DB) (*controller2.StoreController, *controller2.BookController, *controller2.HealthController) {
+
+	storeService := service.NewStoreService(db)
+	storeController := controller2.NewStoreController(storeService)
+
+	var bookService service.BookService = service.GetBookServiceImpl(db)
+	bookController := controller2.NewBookController(bookService)
+
+	healthController := controller2.NewHealthController()
+	return storeController, bookController, healthController
+}
+
+func configDatabase() string {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		viper.GetString("database.user"),
+		viper.GetString("database.password"),
+		viper.GetString("database.host"),
+		viper.GetInt("database.port"),
+		viper.GetString("database.dbname"),
+	)
+	return dsn
 }
 
 func configLogger(err error) {
@@ -64,7 +94,7 @@ func configLogger(err error) {
 	defer logger.Sync()
 }
 
-func propsConfig() error {
+func initProperties() error {
 	viper.SetConfigName("properties")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath("configs/")
@@ -74,35 +104,4 @@ func propsConfig() error {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 	return err
-}
-
-func registerRoutes(storeController *controller2.StoreController, bookController *controller2.BookController, healthController *controller2.HealthController) *gin.Engine {
-	router := gin.Default()
-	storeController.RegisterRoutes(router)
-	bookController.RegisterRoutes(router)
-	healthController.RegisterRoutes(router)
-	return router
-}
-
-func initServices(db *gorm.DB) (*controller2.StoreController, *controller2.BookController, *controller2.HealthController) {
-
-	storeService := service.NewStoreService(db)
-	storeController := controller2.NewStoreController(storeService)
-
-	var bookService service.BookService = service.GetBookServiceImpl(db)
-	bookController := controller2.NewBookController(bookService)
-
-	healthController := controller2.NewHealthController()
-	return storeController, bookController, healthController
-}
-
-func configDatabase() string {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		viper.GetString("database.user"),
-		viper.GetString("database.password"),
-		viper.GetString("database.host"),
-		viper.GetInt("database.port"),
-		viper.GetString("database.dbname"),
-	)
-	return dsn
 }

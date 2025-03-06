@@ -9,7 +9,6 @@ type Store struct {
 	Books    []Book
 }
 
-// TableName overrides the table name used by User to `store`
 func (Store) TableName() string {
 	return "store"
 }

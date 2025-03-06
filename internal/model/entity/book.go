@@ -14,7 +14,6 @@ type Book struct {
 	StoreID       uint
 }
 
-// TableName overrides the table name used by User to `store`
 func (Book) TableName() string {
 	return "books"
 }
@@ -26,7 +25,6 @@ type Page struct {
 	Content    string
 }
 
-// TableName overrides the table name used by User to `store`
 func (Page) TableName() string {
 	return "pages"
 }

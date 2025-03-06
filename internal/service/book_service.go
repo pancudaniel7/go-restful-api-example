@@ -30,7 +30,6 @@ func NewBookService(db *gorm.DB) *BookServiceImpl {
 	return &BookServiceImpl{db: db}
 }
 
-// AddBook adds a new book to a store
 func (s *BookServiceImpl) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	book := internal.Book{
 		Title:         bookDTO.Title,
@@ -46,7 +45,6 @@ func (s *BookServiceImpl) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	return &book, nil
 }
 
-// UpdateBook updates a book in a store
 func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	book := &internal.Book{}
 	result := s.db.First(book, bookDTO.ID)
@@ -68,7 +66,6 @@ func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error
 	return book, nil
 }
 
-// DeleteBook deletes a book from a store
 func (s *BookServiceImpl) DeleteBook(id uint) error {
 	result := s.db.Delete(&internal.Book{}, id)
 	if result.Error != nil {
@@ -78,7 +75,6 @@ func (s *BookServiceImpl) DeleteBook(id uint) error {
 	return nil
 }
 
-// GetBooks retrieves all books from the database
 func (s *BookServiceImpl) GetBooks() ([]internal.Book, error) {
 	var books []internal.Book
 	result := s.db.Find(&books)
@@ -89,7 +85,6 @@ func (s *BookServiceImpl) GetBooks() ([]internal.Book, error) {
 	return books, nil
 }
 
-// GetBook retrieves a book by its ID from the database
 func (s *BookServiceImpl) GetBook(id uint) (*internal.Book, error) {
 	book := &internal.Book{}
 	result := s.db.First(book, id)

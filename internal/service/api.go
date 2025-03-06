@@ -12,3 +12,11 @@ type BookService interface {
 	GetBooks() ([]internal.Book, error)
 	GetBook(id uint) (*internal.Book, error)
 }
+
+type StoreService interface {
+	AddStore(storeDTO dto.StoreDTO) (*internal.Store, error)
+	UpdateStore(storeDTO dto.StoreDTO) (*internal.Store, error)
+	DeleteStore(id uint) error
+	GetStores() ([]internal.Store, error)
+	GetStore(id uint) (*internal.Store, error)
+}

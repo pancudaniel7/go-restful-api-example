@@ -12,10 +12,10 @@ import (
 )
 
 type StoreController struct {
-	service *services.StoreService
+	service services.StoreService
 }
 
-func NewStoreController(service *services.StoreService) *StoreController {
+func NewStoreController(service services.StoreService) *StoreController {
 	return &StoreController{service: service}
 }
 

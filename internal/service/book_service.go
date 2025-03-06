@@ -10,20 +10,24 @@ import (
 	"gorm.io/gorm"
 )
 
-type BookServiceImpl struct {
-	db *gorm.DB
-}
-
 var (
 	bookServiceInstance *BookServiceImpl
 	once                sync.Once
 )
 
-func GetBookServiceImpl(db *gorm.DB) *BookServiceImpl {
+type BookServiceImpl struct {
+	db *gorm.DB
+}
+
+func GetBookServiceImplInstance(db *gorm.DB) *BookServiceImpl {
 	once.Do(func() {
 		bookServiceInstance = &BookServiceImpl{db: db}
 	})
 	return bookServiceInstance
+}
+
+func NewBookService(db *gorm.DB) *BookServiceImpl {
+	return &BookServiceImpl{db: db}
 }
 
 // AddBook adds a new book to a store

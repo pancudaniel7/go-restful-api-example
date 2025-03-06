@@ -3,7 +3,6 @@ package services
 import (
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
-	"log"
 	"sync"
 
 	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
@@ -19,13 +18,6 @@ type BookServiceImpl struct {
 	db *gorm.DB
 }
 
-func GetBookServiceImplInstance(db *gorm.DB) *BookServiceImpl {
-	once.Do(func() {
-		bookServiceInstance = &BookServiceImpl{db: db}
-	})
-	return bookServiceInstance
-}
-
 func NewBookService(db *gorm.DB) *BookServiceImpl {
 	return &BookServiceImpl{db: db}
 }
@@ -39,9 +31,11 @@ func (s *BookServiceImpl) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
 	}
 	result := s.db.Create(&book)
 	if result.Error != nil {
-		log.Println("Error creating book:", result.Error)
+		utils.Log().Error("Error creating book:", result.Error)
 		return nil, result.Error
 	}
+
+	utils.Log().Debug("Book created:", book)
 	return &book, nil
 }
 
@@ -49,7 +43,7 @@ func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error
 	book := &internal.Book{}
 	result := s.db.First(book, bookDTO.ID)
 	if result.Error != nil {
-		log.Println("Error finding book:", result.Error)
+		utils.Log().Error("Error finding book: %s", result.Error.Error())
 		return nil, result.Error
 	}
 
@@ -60,18 +54,22 @@ func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error
 
 	result = s.db.Save(&book)
 	if result.Error != nil {
-		log.Println("Error updating book:", result.Error)
+		utils.Log().Error("Error updating book: %s", result.Error.Error())
 		return nil, result.Error
 	}
+
+	utils.Log().Debug("Book updated for id: %d", book.ID)
 	return book, nil
 }
 
 func (s *BookServiceImpl) DeleteBook(id uint) error {
 	result := s.db.Delete(&internal.Book{}, id)
 	if result.Error != nil {
-		log.Println("Error deleting book:", result.Error)
+		utils.Log().Error("Error deleting book: %s", result.Error.Error())
 		return result.Error
 	}
+
+	utils.Log().Debug("Book deleted: %d", id)
 	return nil
 }
 
@@ -79,9 +77,11 @@ func (s *BookServiceImpl) GetBooks() ([]internal.Book, error) {
 	var books []internal.Book
 	result := s.db.Find(&books)
 	if result.Error != nil {
-		log.Println("Error retrieving books:", result.Error)
+		utils.Log().Error("Error retrieving books: %s", result.Error.Error())
 		return nil, result.Error
 	}
+
+	utils.Log().Debug("All books found")
 	return books, nil
 }
 
@@ -89,8 +89,10 @@ func (s *BookServiceImpl) GetBook(id uint) (*internal.Book, error) {
 	book := &internal.Book{}
 	result := s.db.First(book, id)
 	if result.Error != nil {
-		log.Println("Error finding book:", result.Error)
+		utils.Log().Warn("Error finding book: %v", result.Error)
 		return nil, result.Error
 	}
+
+	utils.Log().Debug("Book found: %d", book.ID)
 	return book, nil
 }

@@ -6,10 +6,9 @@ import (
 	"github.com/pancudaniel7/go-restful-api-example/internal/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"os"
 )
 
 var (
@@ -26,7 +25,6 @@ var (
 
 func main() {
 	readProperties()
-	configLogger()
 
 	initDatabase()
 	initRouter()
@@ -79,48 +77,19 @@ func initControllers() {
 	storeController = controller.NewStoreController(storeService)
 }
 
-func configLogger() {
-	logLevel := viper.GetString("logLevel")
-	var zapLevel zapcore.Level
-
-	switch logLevel {
-	case "debug":
-		zapLevel = zap.DebugLevel
-	case "info":
-		zapLevel = zap.InfoLevel
-	case "trace":
-		zapLevel = zapcore.DebugLevel + 1 // Zap doesn't have a direct trace level, so we use debug
-	default:
-		zapLevel = zap.InfoLevel
-	}
-
-	config := zap.Config{
-		Level:         zap.NewAtomicLevelAt(zapLevel),
-		Development:   false,
-		Encoding:      "json",
-		OutputPaths:   []string{"stdout"},
-		EncoderConfig: zap.NewProductionEncoderConfig(),
-	}
-
-	logger, err := config.Build()
-	if err != nil {
-		panic(err)
-	}
-
-	zap.ReplaceGlobals(logger)
-	err = logger.Sync()
-	if err != nil {
-		return
-	}
-}
-
 func readProperties() {
-	viper.SetConfigName("properties")
+	configName := os.Getenv("CONFIG_NAME")
+	if configName == "" {
+		configName = "local"
+	}
+
+	viper.SetConfigName(configName)
 	viper.SetConfigType("yml")
 	viper.AddConfigPath("configs/")
 
-	err := viper.ReadInConfig()
-	if err != nil {
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 }

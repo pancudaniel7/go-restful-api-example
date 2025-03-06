@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
 	internal "github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
+	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
 	"log"
 
 	"gorm.io/gorm"
@@ -20,7 +21,7 @@ func (s *StoreServiceImpl) AddStore(storeDTO dto.StoreDTO) (*internal.Store, err
 	store := internal.Store{Name: storeDTO.Name, Location: storeDTO.Location}
 	result := s.db.Create(&store)
 	if result.Error != nil {
-		log.Println("Error creating store:", result.Error)
+		utils.Log().Info("Error creating store:", result.Error)
 		return nil, result.Error
 	}
 	return &store, nil

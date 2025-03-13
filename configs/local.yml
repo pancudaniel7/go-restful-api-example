@@ -8,4 +8,4 @@ database:
 server:
   port: 8080
   log:
-    level: info # debug, info
+    level: debug # debug, info

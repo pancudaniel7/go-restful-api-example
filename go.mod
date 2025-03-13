@@ -1,6 +1,6 @@
 module github.com/pancudaniel7/go-restful-api-example
 
-go 1.21.5
+go 1.24
 
 require (
 	github.com/gin-gonic/gin v1.9.1

@@ -13,5 +13,17 @@ services:
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d
 
+  restful-api:
+    image: go-restflu-api-example:v1.0.0
+    build:
+      context: ../
+      dockerfile: ./Dockerfile
+    environment:
+      CONFIG_NAME: prod
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
 volumes:
   restful-data:

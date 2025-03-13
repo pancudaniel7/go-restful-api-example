@@ -25,7 +25,6 @@ var (
 
 func main() {
 	readProperties()
-
 	initDatabase()
 	initRouter()
 	initServices()
@@ -37,6 +36,23 @@ func main() {
 	err := router.Run(fmt.Sprintf(":%d", port))
 	if err != nil {
 		panic(fmt.Sprintf("failed to start server: %v", err))
+	}
+}
+
+func readProperties() {
+	configName := os.Getenv("CONFIG_NAME")
+	if configName == "" {
+		configName = "local"
+	}
+
+	viper.SetConfigName(configName)
+	viper.SetConfigType("yml")
+	viper.AddConfigPath("configs/")
+
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 }
 
@@ -75,21 +91,4 @@ func initControllers() {
 	healthController = controller.NewHealthController()
 	bookController = controller.NewBookController(bookService)
 	storeController = controller.NewStoreController(storeService)
-}
-
-func readProperties() {
-	configName := os.Getenv("CONFIG_NAME")
-	if configName == "" {
-		configName = "local"
-	}
-
-	viper.SetConfigName(configName)
-	viper.SetConfigType("yml")
-	viper.AddConfigPath("configs/")
-
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("fatal error config file: %s", err))
-	}
 }

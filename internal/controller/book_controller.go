@@ -32,7 +32,18 @@ func (c *BookController) AddBook(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, book)
+	bookResponse := gin.H{
+		"book": book,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/books/%d", book.ID),
+			"update": fmt.Sprintf("/books/%d", book.ID),
+			"delete": fmt.Sprintf("/books/%d", book.ID),
+			"create": "/books",
+			"get":    fmt.Sprintf("/books/%d", book.ID),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, bookResponse)
 }
 
 func (c *BookController) UpdateBook(ctx *gin.Context) {
@@ -48,7 +59,18 @@ func (c *BookController) UpdateBook(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, book)
+	bookResponse := gin.H{
+		"book": book,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/books/%d", book.ID),
+			"update": fmt.Sprintf("/books/%d", book.ID),
+			"delete": fmt.Sprintf("/books/%d", book.ID),
+			"create": "/books",
+			"get":    fmt.Sprintf("/books/%d", book.ID),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, bookResponse)
 }
 
 func (c *BookController) DeleteBook(ctx *gin.Context) {
@@ -64,7 +86,14 @@ func (c *BookController) DeleteBook(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Status(http.StatusNoContent)
+	ctx.JSON(http.StatusNoContent, gin.H{
+		"message": "Book deleted",
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/books/%d", id),
+			"create": "/books",
+			"getAll": "/books",
+		},
+	})
 }
 
 func (c *BookController) GetBooks(ctx *gin.Context) {
@@ -74,7 +103,27 @@ func (c *BookController) GetBooks(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, books)
+	var bookResponses []gin.H
+	for _, book := range books {
+		bookResponses = append(bookResponses, gin.H{
+			"book": book,
+			"_links": gin.H{
+				"self":   fmt.Sprintf("/books/%d", book.ID),
+				"delete": fmt.Sprintf("/books/%d", book.ID),
+				"update": fmt.Sprintf("/books/%d", book.ID),
+			},
+		})
+	}
+
+	response := gin.H{
+		"books": bookResponses,
+		"_links": gin.H{
+			"self":   "/books",
+			"create": "/books",
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (c *BookController) GetBook(ctx *gin.Context) {

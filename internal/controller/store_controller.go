@@ -2,13 +2,11 @@ package controller
 
 import (
 	"fmt"
-	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
-
 	"github.com/gin-gonic/gin"
+	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
+	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"net/http"
 	"strconv"
-
-	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 )
 
 type StoreController struct {
@@ -32,7 +30,18 @@ func (c *StoreController) AddStore(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, store)
+	storeResponse := gin.H{
+		"store": store,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/stores/%d", store.ID),
+			"update": fmt.Sprintf("/stores/%d", store.ID),
+			"delete": fmt.Sprintf("/stores/%d", store.ID),
+			"create": "/stores",
+			"get":    fmt.Sprintf("/stores/%d", store.ID),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, storeResponse)
 }
 
 func (c *StoreController) DeleteStore(ctx *gin.Context) {
@@ -48,7 +57,14 @@ func (c *StoreController) DeleteStore(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Status(http.StatusNoContent)
+	ctx.JSON(http.StatusNoContent, gin.H{
+		"message": "Store deleted",
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/stores/%d", id),
+			"create": "/stores",
+			"getAll": "/stores",
+		},
+	})
 }
 
 func (c *StoreController) UpdateStore(ctx *gin.Context) {
@@ -64,7 +80,18 @@ func (c *StoreController) UpdateStore(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, store)
+	storeResponse := gin.H{
+		"store": store,
+		"_links": gin.H{
+			"self":   fmt.Sprintf("/stores/%d", store.ID),
+			"update": fmt.Sprintf("/stores/%d", store.ID),
+			"delete": fmt.Sprintf("/stores/%d", store.ID),
+			"create": "/stores",
+			"get":    fmt.Sprintf("/stores/%d", store.ID),
+		},
+	}
+
+	ctx.JSON(http.StatusOK, storeResponse)
 }
 
 func (c *StoreController) GetStores(ctx *gin.Context) {
@@ -74,7 +101,27 @@ func (c *StoreController) GetStores(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, stores)
+	var storeResponses []gin.H
+	for _, store := range stores {
+		storeResponses = append(storeResponses, gin.H{
+			"store": store,
+			"_links": gin.H{
+				"self":   fmt.Sprintf("/stores/%d", store.ID),
+				"delete": fmt.Sprintf("/stores/%d", store.ID),
+				"update": fmt.Sprintf("/stores/%d", store.ID),
+			},
+		})
+	}
+
+	response := gin.H{
+		"stores": storeResponses,
+		"_links": gin.H{
+			"self":   "/stores",
+			"create": "/stores",
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (c *StoreController) GetStore(ctx *gin.Context) {

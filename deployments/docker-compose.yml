@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   database:
+    container_name: database
     image: mysql:8.3.0
     environment:
       MYSQL_ROOT_PASSWORD: rootadmin
@@ -10,11 +11,13 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    restart: unless-stopped
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d
 
   restful-api:
-    image: go-restflu-api-example:v1.0.0
+    container_name: restful-api
+    image: go-restflu-api:latest
     build:
       context: ../
       dockerfile: ./Dockerfile
@@ -22,6 +25,7 @@ services:
       CONFIG_NAME: prod
     ports:
       - "8080:8080"
+    restart: unless-stopped
     depends_on:
       - database
 

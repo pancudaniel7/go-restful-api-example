@@ -16,3 +16,10 @@ func ConvertTimeToNullTime(t time.Time) sql.NullTime {
 		Valid: true,
 	}
 }
+
+func ConvertNullTimeToTime(nt sql.NullTime) time.Time {
+	if nt.Valid {
+		return nt.Time
+	}
+	return time.Time{}
+}

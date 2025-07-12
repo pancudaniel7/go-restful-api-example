@@ -18,8 +18,8 @@ func NewStoreController(service api.StoreService) *StoreController {
 }
 
 func (c *StoreController) AddStore(ctx *gin.Context) {
-	var storeDTO dto.StoreDTO
-	if err := ctx.ShouldBindJSON(&storeDTO); err != nil {
+	var storeDTO *dto.StoreDTO
+	if err := ctx.ShouldBindJSON(storeDTO); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -68,7 +68,7 @@ func (c *StoreController) DeleteStore(ctx *gin.Context) {
 }
 
 func (c *StoreController) UpdateStore(ctx *gin.Context) {
-	var storeDTO dto.StoreDTO
+	var storeDTO *dto.StoreDTO
 	if err := ctx.ShouldBindJSON(&storeDTO); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

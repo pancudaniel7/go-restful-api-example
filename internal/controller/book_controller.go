@@ -26,7 +26,7 @@ func (c *BookControllerImpl) AddBook(ctx *gin.Context) {
 		return
 	}
 
-	book, err := c.service.AddBook(bookDTO)
+	book, err := c.service.AddBook(&bookDTO)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -53,7 +53,7 @@ func (c *BookControllerImpl) UpdateBook(ctx *gin.Context) {
 		return
 	}
 
-	book, err := c.service.UpdateBook(bookDTO)
+	book, err := c.service.UpdateBook(&bookDTO)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

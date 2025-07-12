@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/controller"
+	repository "github.com/pancudaniel7/go-restful-api-example/internal/repository"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -15,6 +16,9 @@ import (
 var (
 	db     *gorm.DB
 	router *gin.Engine
+
+	bookRepository  api.BookRepository
+	storeRepository api.StoreRepository
 
 	bookService  api.BookService
 	storeService api.StoreService
@@ -28,6 +32,8 @@ func main() {
 	router = gin.Default()
 	readProperties()
 	initDatabase()
+
+	initRepositories()
 	initServices()
 	initControllers()
 
@@ -38,6 +44,11 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("failed to start server: %v", err))
 	}
+}
+
+func initRepositories() {
+	bookRepository = repository.NewBookRepositoryImpl(db)
+	storeRepository = repository.NewStoreRepository(db)
 }
 
 func readProperties() {
@@ -90,8 +101,8 @@ func initDatabase() {
 }
 
 func initServices() {
-	storeService = service.NewStoreService(db)
-	bookService = service.NewBookService(db)
+	storeService = service.NewStoreServiceImpl(storeRepository)
+	bookService = service.NewBookServiceImpl(bookRepository)
 }
 
 func initControllers() {

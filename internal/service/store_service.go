@@ -1,76 +1,78 @@
 package services
 
 import (
+	"fmt"
+	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
-	internal "github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
-	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
-	"log"
-
-	"gorm.io/gorm"
+	"github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
 )
 
 type StoreServiceImpl struct {
-	db *gorm.DB
+	storeRepository api.StoreRepository
 }
 
-func NewStoreService(db *gorm.DB) *StoreServiceImpl {
-	return &StoreServiceImpl{db: db}
+func NewStoreServiceImpl(storeRepository api.StoreRepository) *StoreServiceImpl {
+	return &StoreServiceImpl{storeRepository: storeRepository}
 }
 
-func (s *StoreServiceImpl) AddStore(storeDTO dto.StoreDTO) (*internal.Store, error) {
-	store := internal.Store{Name: storeDTO.Name, Location: storeDTO.Location}
-	result := s.db.Create(&store)
-	if result.Error != nil {
-		utils.Log().Info("Error creating store:", result.Error)
-		return nil, result.Error
+func (ss *StoreServiceImpl) AddStore(storeDTO *dto.StoreDTO) (*dto.StoreDTO, error) {
+	store := &entity.Store{Name: storeDTO.Name, Location: storeDTO.Location}
+	store, err := ss.storeRepository.AddStore(store)
+	if err != nil {
+		return nil, err
 	}
-	return &store, nil
+	return storeDTO, nil
 }
 
-func (s *StoreServiceImpl) UpdateStore(storeDTO dto.StoreDTO) (*internal.Store, error) {
-	store := &internal.Store{}
-	result := s.db.First(store, storeDTO.ID)
-	if result.Error != nil {
-		log.Println("Error finding store:", result.Error)
-		return nil, result.Error
-	}
+func (ss *StoreServiceImpl) UpdateStore(storeDTO *dto.StoreDTO) (*dto.StoreDTO, error) {
+	store := &entity.Store{Name: storeDTO.Name, Location: storeDTO.Location}
 
-	store.Name = storeDTO.Name
-	store.Location = storeDTO.Location
-
-	result = s.db.Save(&store)
-	if result.Error != nil {
-		log.Println("Error updating store:", result.Error)
-		return nil, result.Error
+	if storeDTO.ID == 0 {
+		return nil, fmt.Errorf("store ID must be provided for update")
 	}
-	return store, nil
+	
+	store.ID = storeDTO.ID
+	store, err := ss.storeRepository.UpdateStore(store)
+	if err != nil {
+		return nil, err
+	}
+	return storeDTO, nil
 }
 
-func (s *StoreServiceImpl) DeleteStore(id uint) error {
-	result := s.db.Delete(&internal.Store{}, id)
-	if result.Error != nil {
-		log.Println("Error deleting store:", result.Error)
-		return result.Error
+func (ss *StoreServiceImpl) DeleteStore(id uint) error {
+	err := ss.storeRepository.DeleteStore(id)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func (s *StoreServiceImpl) GetStores() ([]internal.Store, error) {
-	var stores []internal.Store
-	result := s.db.Find(&stores)
-	if result.Error != nil {
-		log.Println("Error retrieving stores:", result.Error)
-		return nil, result.Error
+func (ss *StoreServiceImpl) GetStores() ([]*dto.StoreDTO, error) {
+	stores, err := ss.storeRepository.GetStores()
+	if err != nil {
+		return nil, err
 	}
-	return stores, nil
+
+	storeDTOs := make([]*dto.StoreDTO, len(stores))
+	for i, store := range stores {
+		storeDTOs[i] = &dto.StoreDTO{
+			Name:     store.Name,
+			Location: store.Location,
+		}
+	}
+
+	return storeDTOs, nil
 }
 
-func (s *StoreServiceImpl) GetStore(id uint) (*internal.Store, error) {
-	store := &internal.Store{}
-	result := s.db.First(store, id)
-	if result.Error != nil {
-		log.Println("Error finding store:", result.Error)
-		return nil, result.Error
+func (ss *StoreServiceImpl) GetStore(id uint) (*dto.StoreDTO, error) {
+	store, err := ss.storeRepository.GetStore(id)
+	if err != nil {
+		return nil, err
 	}
-	return store, nil
+
+	storeDTO := &dto.StoreDTO{
+		Name:     store.Name,
+		Location: store.Location,
+	}
+	return storeDTO, nil
 }

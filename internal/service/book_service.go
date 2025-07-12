@@ -1,92 +1,104 @@
 package services
 
 import (
+	"fmt"
+	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
-	internal "github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
+	"github.com/pancudaniel7/go-restful-api-example/internal/model/entity"
 	"github.com/pancudaniel7/go-restful-api-example/internal/utils"
-
-	"gorm.io/gorm"
 )
 
 type BookServiceImpl struct {
-	db *gorm.DB
+	bookRepository api.BookRepository
 }
 
-func NewBookService(db *gorm.DB) *BookServiceImpl {
-	return &BookServiceImpl{db: db}
+func NewBookServiceImpl(bookRepository api.BookRepository) *BookServiceImpl {
+	return &BookServiceImpl{bookRepository: bookRepository}
 }
 
-func (s *BookServiceImpl) AddBook(bookDTO dto.BookDTO) (*internal.Book, error) {
-	book := internal.Book{
+func (bs *BookServiceImpl) AddBook(bookDTO *dto.BookDTO) (*dto.BookDTO, error) {
+	book := &entity.Book{
 		Title:         bookDTO.Title,
 		Author:        bookDTO.Author,
 		PublishedDate: utils.ConvertTimeToNullTime(bookDTO.PublishedDate),
 		StoreID:       bookDTO.StoreID,
 	}
-	result := s.db.Create(&book)
-	if result.Error != nil {
-		utils.Log().Error("Error creating book:", result.Error)
-		return nil, result.Error
+	book, err := bs.bookRepository.AddBook(book)
+	if err != nil {
+		return nil, err
 	}
 
 	utils.Log().Debug("Book created:", book)
-	return &book, nil
+	return bookDTO, nil
 }
 
-func (s *BookServiceImpl) UpdateBook(bookDTO dto.BookDTO) (*internal.Book, error) {
-	book := &internal.Book{}
-	result := s.db.First(book, bookDTO.ID)
-	if result.Error != nil {
-		utils.Log().Error("Error finding book: %s", result.Error.Error())
-		return nil, result.Error
+func (bs *BookServiceImpl) UpdateBook(bookDTO *dto.BookDTO) (*dto.BookDTO, error) {
+	book := &entity.Book{
+		Title:         bookDTO.Title,
+		Author:        bookDTO.Author,
+		PublishedDate: utils.ConvertTimeToNullTime(bookDTO.PublishedDate),
+		StoreID:       bookDTO.StoreID,
 	}
 
-	book.Title = bookDTO.Title
-	book.Author = bookDTO.Author
-	book.PublishedDate = utils.ConvertTimeToNullTime(bookDTO.PublishedDate)
-	book.StoreID = bookDTO.StoreID
+	if bookDTO.ID == 0 {
+		return nil, fmt.Errorf("book ID must be provided for update")
+	}
 
-	result = s.db.Save(&book)
-	if result.Error != nil {
-		utils.Log().Error("Error updating book: %s", result.Error.Error())
-		return nil, result.Error
+	book.ID = bookDTO.ID
+	book, err := bs.bookRepository.UpdateBook(book)
+	if err != nil {
+		return nil, err
 	}
 
 	utils.Log().Debug("Book updated for id: %d", book.ID)
-	return book, nil
+	return bookDTO, nil
 }
 
-func (s *BookServiceImpl) DeleteBook(id uint) error {
-	result := s.db.Delete(&internal.Book{}, id)
-	if result.Error != nil {
-		utils.Log().Error("Error deleting book: %s", result.Error.Error())
-		return result.Error
+func (bs *BookServiceImpl) DeleteBook(id uint) error {
+	err := bs.bookRepository.DeleteBook(id)
+	if err != nil {
+		return err
 	}
 
 	utils.Log().Debug("Book deleted: %d", id)
 	return nil
 }
 
-func (s *BookServiceImpl) GetBooks() ([]internal.Book, error) {
-	var books []internal.Book
-	result := s.db.Find(&books)
-	if result.Error != nil {
-		utils.Log().Error("Error retrieving books: %s", result.Error.Error())
-		return nil, result.Error
+func (bs *BookServiceImpl) GetBooks() ([]*dto.BookDTO, error) {
+	books, err := bs.bookRepository.GetBooks()
+	if err != nil {
+		return nil, err
 	}
 
-	utils.Log().Debug("All books found")
-	return books, nil
+	bookDTOs := make([]*dto.BookDTO, len(books))
+	for i, book := range books {
+		bookDTOs[i] = &dto.BookDTO{
+			ID:            book.ID,
+			Title:         book.Title,
+			Author:        book.Author,
+			PublishedDate: utils.ConvertNullTimeToTime(book.PublishedDate),
+			StoreID:       book.StoreID,
+		}
+	}
+
+	utils.Log().Debug("All books found, count: %d", len(bookDTOs))
+	return bookDTOs, nil
 }
 
-func (s *BookServiceImpl) GetBook(id uint) (*internal.Book, error) {
-	book := &internal.Book{}
-	result := s.db.First(book, id)
-	if result.Error != nil {
-		utils.Log().Warn("Error finding book: %v", result.Error)
-		return nil, result.Error
+func (bs *BookServiceImpl) GetBook(id uint) (*dto.BookDTO, error) {
+	book, err := bs.bookRepository.GetBook(id)
+	if err != nil {
+		return nil, err
 	}
 
-	utils.Log().Debug("Book found: %d", book.ID)
-	return book, nil
+	bookDTO := &dto.BookDTO{
+		ID:            book.ID,
+		Title:         book.Title,
+		Author:        book.Author,
+		PublishedDate: utils.ConvertNullTimeToTime(book.PublishedDate),
+		StoreID:       book.StoreID,
+	}
+
+	utils.Log().Debug("Book found: %d", bookDTO.ID)
+	return bookDTO, nil
 }

@@ -2,23 +2,23 @@ package controller
 
 import (
 	"fmt"
+	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 )
 
-type BookController struct {
-	service services.BookService
+type BookControllerImpl struct {
+	service api.BookService
 }
 
-func NewBookController(service services.BookService) *BookController {
-	return &BookController{service: service}
+func NewBookController(service api.BookService) *BookControllerImpl {
+	return &BookControllerImpl{service: service}
 }
 
-func (c *BookController) AddBook(ctx *gin.Context) {
+func (c *BookControllerImpl) AddBook(ctx *gin.Context) {
 	var bookDTO dto.BookDTO
 	err := ctx.ShouldBindJSON(&bookDTO)
 	if err != nil {
@@ -43,10 +43,10 @@ func (c *BookController) AddBook(ctx *gin.Context) {
 		},
 	}
 
-	ctx.JSON(http.StatusOK, bookResponse)
+	ctx.JSON(http.StatusCreated, bookResponse)
 }
 
-func (c *BookController) UpdateBook(ctx *gin.Context) {
+func (c *BookControllerImpl) UpdateBook(ctx *gin.Context) {
 	var bookDTO dto.BookDTO
 	if err := ctx.ShouldBindJSON(&bookDTO); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -73,7 +73,7 @@ func (c *BookController) UpdateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, bookResponse)
 }
 
-func (c *BookController) DeleteBook(ctx *gin.Context) {
+func (c *BookControllerImpl) DeleteBook(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
@@ -96,7 +96,7 @@ func (c *BookController) DeleteBook(ctx *gin.Context) {
 	})
 }
 
-func (c *BookController) GetBooks(ctx *gin.Context) {
+func (c *BookControllerImpl) GetBooks(ctx *gin.Context) {
 	books, err := c.service.GetBooks()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -126,7 +126,7 @@ func (c *BookController) GetBooks(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (c *BookController) GetBook(ctx *gin.Context) {
+func (c *BookControllerImpl) GetBook(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
@@ -151,12 +151,4 @@ func (c *BookController) GetBook(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, bookResponse)
-}
-
-func (c *BookController) RegisterRoutes(router *gin.Engine) {
-	router.POST("/books", c.AddBook)
-	router.PUT("/books", c.UpdateBook)
-	router.DELETE("/books/:id", c.DeleteBook)
-	router.GET("/books", c.GetBooks)
-	router.GET("/books/:id", c.GetBook)
 }

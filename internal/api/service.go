@@ -1,4 +1,4 @@
-package services
+package api
 
 import (
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"

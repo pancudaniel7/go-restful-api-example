@@ -5,4 +5,4 @@ bin/
 
 .history/
 main-test.go
-restful-api
+go-restful-api

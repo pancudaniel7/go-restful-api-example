@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/controller"
 	service "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"github.com/spf13/viper"
@@ -12,25 +13,25 @@ import (
 )
 
 var (
-	databaseClient *gorm.DB
-	router         *gin.Engine
+	db     *gorm.DB
+	router *gin.Engine
 
-	bookService  service.BookService
-	storeService service.StoreService
+	bookService  api.BookService
+	storeService api.StoreService
 
-	healthController *controller.HealthController
-	bookController   *controller.BookController
-	storeController  *controller.StoreController
+	healthController api.HealthController
+	bookController   api.BookController
+	storeController  api.StoreController
 )
 
 func main() {
+	router = gin.Default()
 	readProperties()
 	initDatabase()
-	initRouter()
 	initServices()
 	initControllers()
 
-	registerRoutes()
+	registerRoutes(router)
 	port := viper.GetInt("server.port")
 
 	err := router.Run(fmt.Sprintf(":%d", port))
@@ -56,10 +57,20 @@ func readProperties() {
 	}
 }
 
-func registerRoutes() {
-	storeController.RegisterRoutes(router)
-	bookController.RegisterRoutes(router)
-	healthController.RegisterRoutes(router)
+func registerRoutes(router *gin.Engine) {
+	router.GET("/health", healthController.Health)
+
+	router.POST("/books", bookController.AddBook)
+	router.PUT("/books", bookController.UpdateBook)
+	router.DELETE("/books/:id", bookController.DeleteBook)
+	router.GET("/books", bookController.GetBooks)
+	router.GET("/books/:id", bookController.GetBook)
+
+	router.POST("/stores", storeController.AddStore)
+	router.PUT("/stores", storeController.UpdateStore)
+	router.DELETE("/stores/:id", storeController.DeleteStore)
+	router.GET("/stores", storeController.GetStores)
+	router.GET("/stores/:id", storeController.GetStore)
 }
 
 func initDatabase() {
@@ -72,19 +83,15 @@ func initDatabase() {
 	)
 
 	var err error
-	databaseClient, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to database: %v", err))
 	}
 }
 
-func initRouter() {
-	router = gin.Default()
-}
-
 func initServices() {
-	storeService = service.NewStoreService(databaseClient)
-	bookService = service.NewBookService(databaseClient)
+	storeService = service.NewStoreService(db)
+	bookService = service.NewBookService(db)
 }
 
 func initControllers() {

@@ -3,17 +3,17 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/pancudaniel7/go-restful-api-example/internal/api"
 	"github.com/pancudaniel7/go-restful-api-example/internal/model/dto"
-	services "github.com/pancudaniel7/go-restful-api-example/internal/service"
 	"net/http"
 	"strconv"
 )
 
 type StoreController struct {
-	service services.StoreService
+	service api.StoreService
 }
 
-func NewStoreController(service services.StoreService) *StoreController {
+func NewStoreController(service api.StoreService) *StoreController {
 	return &StoreController{service: service}
 }
 
@@ -41,7 +41,7 @@ func (c *StoreController) AddStore(ctx *gin.Context) {
 		},
 	}
 
-	ctx.JSON(http.StatusOK, storeResponse)
+	ctx.JSON(http.StatusCreated, storeResponse)
 }
 
 func (c *StoreController) DeleteStore(ctx *gin.Context) {
@@ -149,12 +149,4 @@ func (c *StoreController) GetStore(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, storeResponse)
-}
-
-func (c *StoreController) RegisterRoutes(router *gin.Engine) {
-	router.POST("/stores", c.AddStore)
-	router.PUT("/stores", c.UpdateStore)
-	router.DELETE("/stores/:id", c.DeleteStore)
-	router.GET("/stores", c.GetStores)
-	router.GET("/stores/:id", c.GetStore)
 }

@@ -66,7 +66,7 @@ In order to remote debug the application you can run this and attach a debug int
 dlv debug cmd/go-restful-api-example/main.go --headless --listen=:2345 --api-version=2 --log
 ```
 
-### Runnign the application using Docker COmpose
+### Runnign the application using Docker Compose
 ```bash
 docker-compose -f deployments/docker-compose.yml up -d
 ```
